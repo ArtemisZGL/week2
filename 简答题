@@ -1,0 +1,63 @@
+游戏对象运动的本质是什么？
+运动的本质就是修改游戏对象的transform中的position或者rotation，在每一帧的刷新过程中造成连续变化，看上去就是游戏对象在运动。
+
+请用三种方法以上方法，实现物体的抛物线运动。（如，修改Transform属性，使用向量Vector3的方法…）
+1.	直接修改transform的position
+
+public class NewBehaviourScript : MonoBehaviour {
+
+    public float vertical_speed = 1;
+    public float horizontal_speed = 6;
+    // Use this for initialization  
+    void Start()
+    {
+    }
+
+    // Update is called once per frame  
+    void Update()
+    {
+
+        this.transform.position += Vector3.down * Time.deltaTime * (vertical_speed/10);
+        this.transform.position += horizontal_speed * Vector3.left * Time.deltaTime;
+        vertical_speed++;
+    }
+}
+
+2.利用transform的translate方法
+public class NewBehaviourScript : MonoBehaviour {
+    public float vertical_speed = 1;
+    public float horizontal_speed = 6;
+    // Use this for initialization  
+    void Start()
+    {
+    }
+
+    // Update is called once per frame  
+    void Update()
+    {
+
+        this.transform.Translate(Vector3.down * Time.deltaTime * vertical_speed / 10);
+        this.transform.Translate(horizontal_speed * Vector3.left * Time.deltaTime);
+        vertical_speed++;
+    }
+}
+
+3.创建一个Vector3变量
+public class NewBehaviourScript : MonoBehaviour
+{
+
+    public float vertical_speed = 1;
+    public float horizontal_speed = 6;
+    public float speed = 1;
+    // Use this for initialization  
+
+    // Update is called once per frame  
+    void Update()
+    {
+
+        Vector3 change = new Vector3(-Time.deltaTime * 8, -Time.deltaTime * (speed/10), 0);
+        ;
+        this.transform.position += change;
+        speed++;
+    }
+}
