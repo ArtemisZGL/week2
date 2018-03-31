@@ -61,3 +61,77 @@ public class NewBehaviourScript : MonoBehaviour
         speed++;
     }
 }
+
+3.太阳系
+整个太阳系公转的代码
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class NewBehaviourScript : MonoBehaviour {
+    public Transform sun;
+    public Transform earth;
+    public Transform mercury;
+    public Transform mars;
+    public Transform venus;
+    public Transform jupiter;
+    public Transform saturn;
+    public Transform uranus;
+    public Transform neptune;
+    public Transform moon;
+    public float speed;
+    float[] rx = new float[8];
+    float[] ry = new float[8];
+	// Use this for initialization
+	void Start () {
+        sun.position = new Vector3(0, 0, 30);
+        mercury.position = new Vector3(6, 1, 30);
+        venus.position = new Vector3(10, 2, 30);
+        earth.position = new Vector3(15, 3, 30);
+        mars.position = new Vector3(20, 2, 30);
+        jupiter.position = new Vector3(25, 1, 30);
+        saturn.position = new Vector3(30, 0, 30);
+        uranus.position = new Vector3(35, -1, 30);
+        neptune.position = new Vector3(45, -2, 30);
+        moon.position = new Vector3(17, 3, 30);
+        for(int i = 0; i < 8; i++)
+        {
+            rx[i] = Random.Range(10, 360);
+            ry[i] = Random.Range(10, 360);
+        }
+	}
+	
+	// Update is called once per frame
+	void Update () {
+        mercury.RotateAround(sun.position, new Vector3(0, ry[0], rx[0]), 15 * speed * Time.deltaTime);
+        venus.RotateAround(sun.position, new Vector3(0, ry[1], rx[1]), 8 * speed * Time.deltaTime);
+        earth.RotateAround(sun.position, new Vector3(0, ry[2], rx[2]), 8 * speed * Time.deltaTime);
+        mars.RotateAround(sun.position, new Vector3(0, ry[3], rx[3]), 5 * speed * Time.deltaTime);
+        jupiter.RotateAround(sun.position, new Vector3(0, ry[4], rx[4]), 2 * speed * Time.deltaTime);
+        saturn.RotateAround(sun.position, new Vector3(0, ry[5], rx[5]), 2 * speed * Time.deltaTime);
+        uranus.RotateAround(sun.position, new Vector3(0, ry[6], rx[6]), speed * Time.deltaTime);
+        neptune.RotateAround(sun.position, new Vector3(0, ry[7], rx[7]), speed * Time.deltaTime);
+    }
+}
+
+地球自转代码
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class self_rotate : MonoBehaviour {
+
+    public float speed;
+	// Use this for initialization
+	void Start () {
+		
+	}
+	
+	// Update is called once per frame
+	void Update () {
+        this.transform.Rotate(Vector3.up, speed * Time.deltaTime);
+	}
+}
+
+
+
