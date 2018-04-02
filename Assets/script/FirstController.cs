@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using pd;
@@ -20,13 +20,23 @@ public class FirstController : MonoBehaviour, ISceneController, IUserAction {
         for(int i = 0; i < 3; i++)
         {
             pd_controller p = new pd_controller(true);
-            p.set_pos(right_coast.GetEmptyPos());
+            Vector3 temp = right_coast.GetEmptyPos();
+            p.set_pos(temp);
+            if (temp.x < 0)
+                p.pos_index = (int)-(temp.x + 6.5);
+            else
+                p.pos_index = (int)(temp.x - 6.5);
             p.set_coast(right_coast);
             right_coast.insert(p);
             p.set_name(i.ToString() + "priest");
             pds[i] = p;
             pd_controller d = new pd_controller(false);
-            d.set_pos(right_coast.GetEmptyPos());
+            temp = right_coast.GetEmptyPos();
+            d.set_pos(temp);
+            if (temp.x < 0)
+                d.pos_index = (int)-(temp.x + 6.5);
+            else
+                d.pos_index = (int)(temp.x - 6.5);
             d.set_coast(right_coast);
             right_coast.insert(d);
             d.set_name(i.ToString() + "devil");
@@ -65,8 +75,16 @@ public class FirstController : MonoBehaviour, ISceneController, IUserAction {
             else
                 coast = left_coast;
 
+            Vector3 temp = coast.GetEmptyPos();
+            
+          
+            
+            pORd.set_pos(temp);
+            if (coast.GetEmptyPos().x < 0)
+                pORd.pos_index = (int)-(temp.x + 6.5);
+            else
+                pORd.pos_index = (int)(temp.x - 6.5);
             pORd.set_coast(coast);
-            pORd.set_pos(coast.GetEmptyPos());
             coast.insert(pORd);
             boat.remove(pORd);
             
@@ -84,7 +102,13 @@ public class FirstController : MonoBehaviour, ISceneController, IUserAction {
                 if (boat.get_side())
                     return;
                 pORd.set_boat(boat);
-                pORd.set_pos(boat.GetEmptyPos());
+
+                Vector3 temp = boat.GetEmptyPos();
+                pORd.set_pos(temp);
+                if (temp.x < 0)
+                    pORd.boat_pos_index = (int)-(temp.x + 3.5);
+                else
+                    pORd.boat_pos_index = (int)(temp.x - 3.5);
                 left_coast.remove(pORd);
                 boat.insert(pORd);
                
@@ -96,7 +120,12 @@ public class FirstController : MonoBehaviour, ISceneController, IUserAction {
                     return;
                 
                 right_coast.remove(pORd);
-                pORd.set_pos(boat.GetEmptyPos());
+                Vector3 temp = boat.GetEmptyPos();
+                pORd.set_pos(temp);
+                if (temp.x < 0)
+                    pORd.boat_pos_index = (int)-(temp.x + 3.5);
+                else
+                    pORd.boat_pos_index = (int)(temp.x - 3.5);
                 pORd.set_boat(boat);
                 boat.insert(pORd);
                
@@ -148,7 +177,16 @@ public class FirstController : MonoBehaviour, ISceneController, IUserAction {
         }
         for (int i = 0; i < pds.Length; i++)
         {
+            Vector3 temp = right_coast.GetEmptyPos();
+
+
+
             pds[i].set_pos(right_coast.GetEmptyPos());
+            if (right_coast.GetEmptyPos().x < 0)
+                pds[i].pos_index = (int)-(temp.x + 6.5);
+            else
+                pds[i].pos_index = (int)(temp.x - 6.5);
+           
             right_coast.insert(pds[i]);
         }
     }
