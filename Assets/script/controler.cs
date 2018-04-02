@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using pd;
@@ -42,6 +42,9 @@ namespace pd
         control_moving move;
         click_gui cg;
         bool type;
+        public int pos_index { get; set; }
+        public int boat_pos_index { get; set; }
+
         public pd_controller(bool pORd)
         {
             if(pORd)
@@ -78,7 +81,7 @@ namespace pd
         public void set_boat(boat_controller boat)
         {
             pd.transform.SetParent(boat.get_boat().transform);
-            Debug.Log(pd.transform.parent);
+            //Debug.Log(pd.transform.parent);
         }
 
         public void set_name(string name)
@@ -93,6 +96,7 @@ namespace pd
 
         public void reset()
         {
+            pos_index = 0;
             pd.transform.parent = null;
         }
 
@@ -102,13 +106,12 @@ namespace pd
     public class coast_controller
     {
         GameObject coast;
-        pd_controller[] pds; 
+        List<pd_controller> pds = new List<pd_controller>(); 
         bool side; // true right, false left
 
 
         public coast_controller(bool _side)
         {
-            pds = new pd_controller[6];
             if (_side)
             {
                 coast = Object.Instantiate(Resources.Load("perfab/coast", typeof(GameObject)) , new Vector3(9, 1, 0), Quaternion.identity, null) as GameObject;
@@ -122,19 +125,29 @@ namespace pd
 
         public Vector3 GetEmptyPos()
         {
-            int index = -1;
-            for(int i = 0; i < pds.Length; i++)
+            int index = 0;
+            for (int i = 0; i < 6; i++)
             {
-                if(pds[i] == null)
+                bool check = true;
+                for (int j = 0; j < pds.Count; j++)
+                {
+                    
+                    if (i == pds[j].pos_index)
+                    {
+                        check = false;
+                        break;
+                    }
+                }
+               if(check)
                 {
                     index = i;
                     break;
                 }
             }
-            if(index == -1)
-            {
-                return Vector3.zero;
-            }
+
+            //Debug.Log(index);
+            
+          
             if(side)
             {
                 return new Vector3(6.5F + index, 2.5F, 0);
@@ -152,34 +165,19 @@ namespace pd
 
         public void insert(pd_controller pOrd)
         {
-            for(int i = 0; i < pds.Length; i++)
-            {
-                if(pds[i] == null)
-                {
-                    pds[i] = pOrd;
-                    return;
-                }
-            }
-            return;
+            pds.Add(pOrd);
         }
 
         public void remove(pd_controller pORd)
         {
-            for (int i = 0; i < pds.Length; i++)
-            {
-                if (pds[i] != null && pds[i].get_name() == pORd.get_name())
-                {
-                    pds[i] = null;
-                    return;
-                }
-            }
+            pds.Remove(pORd);
         }
 
         public bool is_on_coast(pd_controller pORd)
         {
-            for (int i = 0; i < pds.Length; i++)
+            for (int i = 0; i < pds.Count; i++)
             {
-                if (pds[i] != null && pds[i].get_name() == pORd.get_name())
+                if (pds[i] == pORd)
                 {
                     return true;
                 }
@@ -190,9 +188,9 @@ namespace pd
         public int get_pcount()
         {
             int ans = 0;
-            for (int i = 0; i < pds.Length; i++)
+            for (int i = 0; i < pds.Count; i++)
             {
-                if (pds[i] != null && pds[i].get_type())
+                if (pds[i].get_type())
                     ans++;
             }
             return ans;
@@ -201,9 +199,9 @@ namespace pd
         public int get_dcount()
         {
             int ans = 0;
-            for (int i = 0; i < pds.Length; i++)
+            for (int i = 0; i < pds.Count; i++)
             {
-                if (pds[i] != null && !pds[i].get_type())
+                if (!pds[i].get_type())
                     ans++;
             }
             return ans;
@@ -211,8 +209,7 @@ namespace pd
 
         public void reset()
         {
-            for (int i = 0; i < pds.Length; i++)
-                pds[i] = null;
+            pds.RemoveRange(0, pds.Count);
 
             
         }
@@ -224,11 +221,13 @@ namespace pd
         GameObject boat;
         control_moving move;
         bool goto_side;
-        pd_controller[] pds = new pd_controller[2];
+       List<pd_controller> pds = new List<pd_controller>();
         click_gui cg;
+  
 
         public boat_controller()
         {
+           
             goto_side = true;
             boat = Object.Instantiate(Resources.Load("perfab/boat", typeof(GameObject)), new Vector3(4.5F, 1, 0), Quaternion.identity, null) as GameObject;
             boat.name = "boat";
@@ -252,38 +251,42 @@ namespace pd
 
         public bool empty()
         {
-            for(int i = 0; i < pds.Length; i++)
-            {
-                if (pds[i] != null)
-                    return false;
-            }
-            return true;
+            return pds.Count == 0;
         }
 
         public Vector3 GetEmptyPos()
         {
-            int index = -1;
-            for(int i = 0; i < pds.Length; i++)
+            //Debug.Log("count:" + pds.Count);
+
+
+            int index = 0;
+            for (int i = 0; i < 2; i++)
             {
-                if(pds[i] == null)
+                bool check = true;
+                for (int j = 0; j < pds.Count; j++)
+                {
+
+                    if (i == pds[j].boat_pos_index)
+                    {
+                        check = false;
+                        break;
+                    }
+                }
+                if (check)
                 {
                     index = i;
                     break;
                 }
             }
-            
-            if (index == -1)
+
+
+            if (goto_side)
             {
-                return Vector3.zero;
-            }
-           
-            if(goto_side)
-            {
-                return new Vector3(4.5F + index, 1.6F, 0);
+                return new Vector3(3.5F + index, 1.6F, 0);
             }
             else
             {
-                return new Vector3(-4.5F - index, 1.6F, 0);
+                return new Vector3(-3.5F - index, 1.6F, 0);
             }
         }
 
@@ -299,33 +302,20 @@ namespace pd
 
         public void insert(pd_controller pORd)
         {
-            for(int i = 0; i < pds.Length; i++)
-            {
-                if(pds[i] == null)
-                {
-                    pds[i] = pORd;
-                    return;
-                }
-            }
+            pds.Add(pORd);
         }
 
         public void remove(pd_controller pORd)
         {
-            for(int i = 0; i < pds.Length; i++)
-            {
-                if (pds[i] != null && pds[i].get_name() == pORd.get_name())
-                {
-                    pds[i] = null;
-                    return;
-                }
-            }
+            pds.Remove(pORd);
+            
         }
 
         public bool is_on_boat(pd_controller pORd)
         {
-            for (int i = 0; i < pds.Length; i++)
+            for (int i = 0; i < pds.Count; i++)
             {
-                if (pds[i] != null && pds[i].get_name() == pORd.get_name())
+                if (pds[i] == pORd)
                 {
                     return true;
                 }
@@ -335,20 +325,15 @@ namespace pd
 
         public bool is_full()
         {
-            for(int i = 0; i < pds.Length; i++)
-            {
-                if (pds[i] == null)
-                    return false;
-            }
-            return true;
+            return pds.Count == 2;
         }
 
         public int get_pcount()
         {
             int ans = 0;
-            for (int i = 0; i < pds.Length; i++)
+            for (int i = 0; i < pds.Count; i++)
             {
-                if (pds[i] != null && pds[i].get_type())
+                if (pds[i].get_type())
                     ans++;
             }
             return ans;
@@ -357,9 +342,9 @@ namespace pd
         public int get_dcount()
         {
             int ans = 0;
-            for (int i = 0; i < pds.Length; i++)
+            for (int i = 0; i < pds.Count; i++)
             {
-                if (pds[i] != null && !pds[i].get_type())
+                if (!pds[i].get_type())
                     ans++;
             }
             return ans;
@@ -367,11 +352,11 @@ namespace pd
 
         public void reset()
         {
-            for (int i = 0; i < pds.Length; i++)
-                pds[i] = null;
+            pds.RemoveRange(0, pds.Count);
 
             goto_side =false;
             Move();
+           
         }
     }
 
